@@ -183,5 +183,4 @@ ax1.set_ylabel('$U_{swim}$')
 plt.xscale('log')   # Log scale on X-axis
 plt.yscale('log')   # Log scale on Y-axis
 plt.tight_layout();
-plt.savefig('single_tHree_validation_pystokes.png',format='svg');
-
+plt.savefig('single_tHree_validation_pystokes.svg',format='svg');
