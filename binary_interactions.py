@@ -54,8 +54,8 @@ fig, ax1 = plt.subplots(1,1, figsize=(4,3));
 
 cmap = cm.get_cmap('plasma');
 
-ax1.plot(LAMBDA/a,uy/np.abs(uy[-1]),'-',color=cmap(0.0),label='$U_{swim}$');
-ax1.plot(LAMBDA/a,ux/np.abs(uy[-1]),'-',color=cmap(0.5),label='$U_{side}$');
+ax1.plot(LAMBDA/a,uy/np.abs(uy[-1]),'-',color=cmap(0.4),label='$U_{swim}$');
+ax1.plot(LAMBDA/a,ux/np.abs(uy[-1]),'-',color=cmap(0.9),label='$U_{side}$');
 
 ### Gray-out the area for lambda associated to particle inter-penetration!
 plt.axvspan(xmin=LAMBDA[0]/a,xmax=2*d*np.cos(alpha), color='gray',alpha=0.3);
