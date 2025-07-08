@@ -112,7 +112,8 @@ def single_tHree_analytic(F, mu, a, d, alpha):
 NtHree = 1 # number of tHree microswimmers
 a = 1      # radius of the particles composing a tHree system
 eta = 1    # viscosity
-alpha = np.pi / 4 ### $\alpha>0$ puller, $\alpha=0$ neutra, $\alpha<0$ pusher$
+beta=1.3
+alpha = np.arctan(beta) ### $\alpha>0$ puller, $\alpha=0$ neutra, $\alpha<0$ pusher$
 
 # Initial location of the tHree bodies (not the trans-cis flagella...)
 
@@ -160,20 +161,32 @@ import matplotlib.cm     as cm
 plt.rc('text',usetex=True);
 plt.rc('font',family='serif');
 
+
+
 fig, ax1 = plt.subplots(1,1, figsize=(4,3));
 
 cmap = cm.get_cmap('plasma');
+
+#Townsend plot
+
+npzfile=np.load('single_tHree_Townsend/Townsend_velocity_1751970776.npz')
+V_1=npzfile['arr_0']
+V_10=npzfile['arr_1']
+V_100=npzfile['arr_2']
+
+ax1.plot(d/a,V_1, '.', color=cmap(0.99), label='Townsend 1/1')
+ax1.plot(d/a,V_10, '.', color=cmap(0.89), label='Townsend 1/10')
+ax1.plot(d/a,V_100, '.', color=cmap(0.79), label='Townsend 1/100')
 
 ax1.plot(d/a,uy,'-',color=cmap(0.0),label='PyStokes');
 
 # get the values obtained using the analytical prediction...
 uyANA = single_tHree_analytic(1, eta, a, d, alpha)
-ax1.plot(d/a,uyANA*6*np.pi,'--',color=cmap(0.75),label='analytic');
+ax1.plot(d/a,uyANA*6*np.pi,'--',color=cmap(0.45),label='analytic');
 
 # add shaded area, to indicate that values below a given threshold are not physical.
 # Add shaded background for x < 2
 plt.axvspan(xmin=d[0]/a, xmax=2, color='gray', alpha=0.3)
-
 
 
 ax1.legend();
