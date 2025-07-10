@@ -93,3 +93,13 @@ def extract_arrayBody(v, NtHree):
     # Concatenate in the same format: [vx_body, vy_body, vz_body]
     vBody = np.concatenate([vx_body, vy_body, vz_body])
     return vBody
+
+def point_force_Analytic(l,beta,f,a):
+    cos2=(np.cos(beta))**2
+    sin2=(np.sin(beta))**2
+    cossin=np.cos(beta)*np.sin(beta)
+    U_swim=cos2*(3/4)*(a/l +(a/l)**3) +sin2*(1/2)*(3*a/l-(a/l)**2)
+    U_swim=f*U_swim
+    U_side=cossin*(1/4)*(3*a/l-(a/l)**3)
+    U_side=f*U_side
+    return U_swim, U_side
