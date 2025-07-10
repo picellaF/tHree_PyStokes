@@ -1,6 +1,7 @@
 import pystokes
 import numpy as np
 import tHree
+import time
 
 NtHree = 2 # number of tHree microswimmers
 a = 1      # radius of the particles composing a tHree system
@@ -13,8 +14,9 @@ v = np.zeros(NtHree*9); # each tHree microswimmer is represented by 3 particles
                           # hence, the *9 factor
 # Initialize class
 rbm    = pystokes.unbounded.Rbm(radius=a, particles=NtHree*3, viscosity=eta)
-d = 2.*a     # distance between the tHree body and flagella (trans and cis one, represented by a particle)
-alpha = np.pi / 4 ### $\alpha>0$ puller, $\alpha=0$ neutra, $\alpha<0$ pusher$
+d = 3.3*a     # distance between the tHree body and flagella (trans and cis one, represented by a particle)
+beta = 1.3
+alpha = np.arctan(beta) ### $\alpha>0$ puller, $\alpha=0$ neutra, $\alpha<0$ pusher$
 
 Thrust   = 1. # thrust of the tHree microswimmer
 Buoyancy = -0. # buoyancy applied on the body of the microswimmer 
@@ -54,14 +56,72 @@ fig, ax1 = plt.subplots(1,1, figsize=(4,3));
 
 cmap = cm.get_cmap('plasma');
 
+#Townsend plot
+
+npzfile=np.load('binary_interactions_Townsend/Townsend_binary_velocity_1752145687.npz')
+V_y_mono=npzfile['arr_0']
+V_y=npzfile['arr_1']
+V_x_mono=npzfile['arr_2']
+V_x=npzfile['arr_3']
+Lambda=npzfile['arr_4']
+
+ax1.plot(Lambda, V_y_mono/np.abs(V_y_mono[-1]), '.', color=cmap(0.99), label='Townsend $U_{swim}$ 1/1')
+ax1.plot(Lambda, V_x_mono/np.abs(V_y_mono[-1]), '.', color=cmap(0.99), label='Townsend $U_{side}$ 1/1')
+ax1.plot(Lambda, V_y/np.abs(V_y[-1]), '.', color=cmap(0.89), label='Townsend $U_{swim}$ 1/10')
+ax1.plot(Lambda, V_x/np.abs(V_y[-1]), '.', color=cmap(0.89), label='Townsend $U_{side}$ 1/10')
+
+#Analytic
+def binary_interaction_analytic(F, mu, a, d, alpha, lam):
+    prefactor=1/(6*np.pi*mu*a)
+    
+    #single swimmer
+
+    U_swim_flagel_1, U_side_flagel_1=tHree.point_force_Analytic(d,alpha,-F/2,a)
+    U_swim_flagel_2, U_side_flagel_2=tHree.point_force_Analytic(d,np.pi-alpha,-F/2,a)
+    An_single_swim = F+U_swim_flagel_1 +U_swim_flagel_2
+    An_single_side = U_side_flagel_1 +U_side_flagel_2
+    #secondary swimmer
+    
+    U_swim_body, U_side_body = tHree.point_force_Analytic(lam,0,F,a)
+    #first flagel
+
+    l_flagel_1=np.sqrt(d**2+lam**2-2*lam*d*np.cos(alpha))
+    beta_flagel_1=np.arcsin(d*np.sin(alpha)/l_flagel_1)
+    U_swim_flagel_1, U_side_flagel_1=tHree.point_force_Analytic(l_flagel_1,beta_flagel_1,-F/2,a)
+
+    #second flagel
+
+    l_flagel_2=np.sqrt(d**2+lam**2+2*lam*d*np.cos(alpha))
+    beta_flagel_2=np.arcsin(d*np.sin(alpha)/l_flagel_2)
+    U_swim_flagel_2, U_side_flagel_2=tHree.point_force_Analytic(l_flagel_2,beta_flagel_2,-F/2,a)
+
+    An_binary_swim= An_single_swim + U_swim_body+U_swim_flagel_1+U_swim_flagel_2
+    An_binary_side= An_single_side + U_side_body+U_side_flagel_1+U_side_flagel_2
+   
+    V_swim=prefactor*An_binary_swim
+    V_side=prefactor*An_binary_side
+
+    return V_swim, V_side
+
+uyANA,uxANA=binary_interaction_analytic(Thrust, eta, a, d, alpha, LAMBDA)
+
+
+
 ax1.plot(LAMBDA/a,uy/np.abs(uy[-1]),'-',color=cmap(0.4),label='$U_{swim}$');
-ax1.plot(LAMBDA/a,ux/np.abs(uy[-1]),'-',color=cmap(0.9),label='$U_{side}$');
+ax1.plot(LAMBDA/a,ux/np.abs(uy[-1]),'-',color=cmap(0.5),label='$U_{side}$');
+
+
+ax1.plot(LAMBDA/a,uyANA/np.abs(uyANA[-1]),'--',color=cmap(0.15),label='analytic $U_{swim}$');
+ax1.plot(LAMBDA/a,uxANA/np.abs(uyANA[-1]),'--',color=cmap(0.25),label='analytic $U_{side}$');
+
+
+
 
 ### Gray-out the area for lambda associated to particle inter-penetration!
 plt.axvspan(xmin=LAMBDA[0]/a,xmax=2*d*np.cos(alpha), color='gray',alpha=0.3);
 
 ax1.legend();
-ax1.set_xlabel('$\lambda/R$')
+ax1.set_xlabel('$\\lambda/R$')
 # Set logarithmic scale
 plt.xscale('log')   # Log scale on X-axis
 #plt.yscale('log')   # Log scale on Y-axis
@@ -81,4 +141,4 @@ plt.xticks(xticks, xticklabels)
 plt.xlim(np.min(LAMBDA/a),np.max(LAMBDA/a));
 
 plt.tight_layout();
-plt.savefig('binary_interactions.svg',format='svg');
+plt.savefig('binary_interactions'+str(int(time.time()))+'.svg',format='svg');
