@@ -1,5 +1,6 @@
 import pystokes
 import numpy as np
+import time
 
 """ tHree definition for pystokes
     for the moment, particles are all aligned in the y direction only."""
@@ -196,4 +197,4 @@ ax1.set_ylabel('$U_{swim}$')
 plt.xscale('log')   # Log scale on X-axis
 plt.yscale('log')   # Log scale on Y-axis
 plt.tight_layout();
-plt.savefig('single_tHree_validation_pystokes.svg',format='svg');
+plt.savefig('single_tHree_validation_pystokes'+str(int(time.time()))+'.svg',format='svg');
