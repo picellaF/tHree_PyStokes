@@ -23,7 +23,7 @@ beta = 1.3
 alpha = np.arctan(beta) ### $\alpha>0$ puller, $\alpha=0$ neutra, $\alpha<0$ pusher$
 
 Thrust   = 1. # thrust of the tHree microswimmer
-Buoyancy = -Thrust*np.array([0.,0.2,0.5,0.6]) # buoyancy applied on the body of the microswimmer 
+Buoyancy = -Thrust*np.array([0.,0.25,0.5]) # buoyancy applied on the body of the microswimmer 
 
 # Initialize class
 rbm    = pystokes.unbounded.Rbm(radius=a, particles=NtHree*3, viscosity=eta)
@@ -63,24 +63,20 @@ cmap = cm.get_cmap('plasma');
 
 #Townsend plot
 
-npzfile=np.load('buoyancy_binary_interactions_Townsend/Townsend_buoyancy_binary_velocity_20250717155955.npz')
+npzfile=np.load('buoyancy_binary_interactions_Townsend/Townsend_buoyancy_binary_velocity_v2_20250724191139.npz')
 V_y_mono_0=npzfile['arr_0']
 V_y_0=npzfile['arr_1']
-V_y_mono_2=npzfile['arr_2']
-V_y_2=npzfile['arr_3']
+V_y_mono_25=npzfile['arr_2']
+V_y_25=npzfile['arr_3']
 V_y_mono_5=npzfile['arr_4']
 V_y_5=npzfile['arr_5']
-V_y_mono_6=npzfile['arr_6']
-V_y_6=npzfile['arr_7']
-Lambda=npzfile['arr_8']
+Lambda=npzfile['arr_6']
 ax1.plot(Lambda, V_y_mono_0/np.abs(V_y_mono_0[-1]), '.', markersize=2, color=cmap(0.90), label='Townsend $U_{swim}$ 1/1, B=0F')
 ax1.plot(Lambda, V_y_0/np.abs(V_y_0[-1]), '*',markersize=2,  color=cmap(0.80), label='Townsend $U_{swim}$ 1/10, B=0F')
-ax1.plot(Lambda, V_y_mono_2/np.abs(V_y_mono_2[-1]),  '.', markersize=2, color=cmap(0.92), label='Townsend $U_{swim}$ 1/1, B=.2F')
-ax1.plot(Lambda, V_y_2/np.abs(V_y_2[-1]), '*', markersize=2, color=cmap(0.82), label='Townsend $U_{swim}$ 1/10, B=.2F')
+ax1.plot(Lambda, V_y_mono_25/np.abs(V_y_mono_25[-1]),  '.', markersize=2, color=cmap(0.92), label='Townsend $U_{swim}$ 1/1, B=.25F')
+ax1.plot(Lambda, V_y_25/np.abs(V_y_25[-1]), '*', markersize=2, color=cmap(0.82), label='Townsend $U_{swim}$ 1/10, B=.25F')
 ax1.plot(Lambda, V_y_mono_5/np.abs(V_y_mono_5[-1]),  '.', markersize= 2, color=cmap(0.95), label='Townsend $U_{swim}$ 1/1, B=.5F')
 ax1.plot(Lambda, V_y_5/np.abs(V_y_5[-1]), '*',markersize=2,  color=cmap(0.85), label='Townsend $U_{swim}$ 1/10, B=.5F')
-ax1.plot(Lambda, V_y_mono_6/np.abs(V_y_mono_6[-1]), '.',markersize=2, color=cmap(0.96), label='Townsend $U_{swim}$ 1/1, B=.6F')
-ax1.plot(Lambda, V_y_6/np.abs(V_y_6[-1]), '*',markersize=2, color=cmap(0.86), label='Townsend $U_{swim}$ 1/10, B=.6F')
 
 
 #Analytic
@@ -150,3 +146,4 @@ plt.xlim(np.min(LAMBDA/a),np.max(LAMBDA/a));
 
 plt.tight_layout();
 plt.savefig('buoyancy_binary_interactions'+str(timestamp)+'.svg',format='svg');
+plt.show()
